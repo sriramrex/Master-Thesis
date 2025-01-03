@@ -1,6 +1,6 @@
 clear; close all; clc
 
-base_path = 'C:\IIT_HHCM_LAB\Matlab_Files\FTSensor0_streamingData_25_11_2024_14_20_14.csv';
+base_path = ['/home/sduddu-iit.local/HHCM_LAB/Matlab_Files/Isolated_Tool_Test/FTSensor0_streamingData_09_12_2024_12_19_03.csv'];
 ftsensor = readtable(base_path);
 sensor_t = ftsensor.SampleID;
 sensor_data = [ftsensor.Fx'; ftsensor.Fy'];
@@ -9,7 +9,7 @@ sensor_data = [ftsensor.Fx'; ftsensor.Fy'];
 
 time_stamp = linspace(0,15000,length(sensor_t));
 time = time_stamp/1000;
-period = 15; % Time for one complete cycle (2*pi)
+period = 0.001; % Time for one complete cycle (2*pi)
 % Calculate angles
 time_angle = 2 * pi * mod(time, period) / period;
 
@@ -18,14 +18,14 @@ time_angle = 2 * pi * mod(time, period) / period;
 f_x = ftsensor.Fx';
 f_y = ftsensor.Fy';
 
-% Calculate angles
-angles = atan2(f_y,f_x);
-% angles(angles < 0) = angles(angles < 0) + 2*pi;
- theta = mod(angles,360);
- theta = round(theta,2);
+
 
 % Calculate  euclidien distance
 distance = sqrt(f_x.^2 + f_y.^2);
+
+% Calculate angles
+angles = atan2(f_y,f_x);
+%angles = wrapTo360(theta);
 
 
 %% 3d data
@@ -38,11 +38,12 @@ y_t = distance .*sin(time_angle);
 
 %% Plot distance vs angle
 figure;
-polarscatter(angles, distance,"filled"); % Polar plot for distance as a function of angle
+polarscatter(angles, distance,'filled'); % Polar plot for distance as a function of angle
 title('Distance vs Angle');
 
 figure(2);
 
+%plot3(f_x(1:500),f_y(1:500),time(1:500),"filled");
 scatter3(x,y,time,36,time,"filled");
 colormap jet;
 colorbar;
